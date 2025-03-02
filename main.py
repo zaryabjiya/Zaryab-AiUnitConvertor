@@ -8,15 +8,19 @@ import os
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
+# ✅ If .env file doesn't work, manually set API key here
 if not api_key:
-    st.error("❌ API Key not found! Make sure to set GEMINI_API_KEY in your .env file.")
+    api_key = "your_actual_api_key_here"  # 🔹 Replace with your API key
+
+# ✅ Check if API key exists
+if not api_key or api_key == "your_actual_api_key_here":
+    st.error("❌ API Key not found! Set GEMINI_API_KEY in your .env file or manually in the code.")
 else:
     genai.configure(api_key=api_key)
 
 # ✅ Initialize Pint for unit conversion
 ureg = pint.UnitRegistry()
 
-# ✅ Function to convert units
 def convert_units(value, from_unit, to_unit):
     try:
         result = (value * ureg(from_unit.lower())).to(to_unit.lower())
@@ -26,24 +30,19 @@ def convert_units(value, from_unit, to_unit):
     except Exception:
         return "⚠️ Please enter a valid numeric value and unit names."
 
-# ✅ Function to interact with Gemini AI
+# ✅ AI Assistant Function (Gemini API Fix)
 def ask_gemini(prompt):
-    if not api_key:
-        return "⚠️ API Key missing. Please set it in the .env file."
-
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
-        return response.text if response and response.text else "❌ No response from AI."
+        return response.text if response and response.text else "⚠️ No response from AI. Try again!"
     except Exception as e:
-        return f"⚠️ AI Error: {str(e)}"
+        return f"❌ AI Error: {str(e)}"
 
 # ✅ Streamlit Page Configuration
 st.set_page_config(page_title="Gemini Unit Converter", page_icon="♾️", layout="wide")
-
 st.sidebar.title("🛠️ Settings")
-mode = st.sidebar.radio("🔍 Select Mode:", ["Unit Converter", "AI Assistant", "Units & Conversions Table"])
-st.sidebar.markdown("Effortlessly transform your *UNITS🔮*")
+mode = st.sidebar.radio("Select Options:", ["Unit Converter", "AI Assistant", "Units & Conversions Table"])
 
 st.title("♾️ Gemini-Powered Unit Converter")
 st.write("Easily convert units and ask AI-powered questions!")
@@ -52,15 +51,15 @@ st.write("Easily convert units and ask AI-powered questions!")
 if mode == "Unit Converter":
     st.subheader("🔮 Unit Converter")
     col1, col2, col3 = st.columns([1, 1, 1])
-
+    
     with col1:
         value = st.text_input("🔢 Enter value:", placeholder="e.g., 10")
     with col2:
         from_unit = st.text_input("📏 From unit:", placeholder="e.g., meters")
     with col3:
         to_unit = st.text_input("🔄 To unit:", placeholder="e.g., feet")
-
-    if st.button("🚀 Convert Now"):
+    
+    if st.button("🚀 Convert Now", use_container_width=True):
         if value and from_unit and to_unit:
             try:
                 value = float(value)
@@ -74,9 +73,9 @@ if mode == "Unit Converter":
 # ✅ AI Assistant Section
 elif mode == "AI Assistant":
     st.subheader("🧠 AI Assistant")
-    user_query = st.text_area("💬 Ask anything:", placeholder="Type your question here...", height=100)
-
-    if st.button("🚀 Get Answer"):
+    user_query = st.text_area("💬 Ask your question:", placeholder="Type your question here...", height=100)
+    
+    if st.button("🚀 Get Answer", use_container_width=True):
         if user_query:
             ai_response = ask_gemini(user_query)
             st.success(f"🤖 {ai_response}")
@@ -92,7 +91,6 @@ elif mode == "Units & Conversions Table":
         "Temperature": ["0°C = 32°F", "100°C = 212°F"],
         "Volume": ["1 liter = 4.227 cups", "1 gallon = 3.785 liters"],
     }
-
     for category, conversions in conversion_data.items():
         with st.expander(f"📌 {category}"):
             for conversion in conversions:
@@ -101,5 +99,3 @@ elif mode == "Units & Conversions Table":
 # ✅ Footer
 st.markdown("---")
 st.markdown("🚀 Developed by *Zaryab Irfan* | Powered by *Gemini AI & Streamlit*")
-
-
