@@ -1,5 +1,3 @@
-y * AI & Streamlit*")
-
 import streamlit as st
 import pint
 import google.generativeai as genai
