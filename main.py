@@ -4,105 +4,110 @@ import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
-# Environment variables load karna
+# 🔹 Load API key for Gemini AI
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
-# Gemini AI ko configure karna
 if api_key:
     genai.configure(api_key=api_key)
 
-# Pint library ka setup unit conversion ke liye
+# 🔹 Initialize Pint for unit conversion
 ureg = pint.UnitRegistry()
 
-# Function: Unit Conversion
+# 🚀 Function: Convert Units
 def convert_units(value, from_unit, to_unit):
     try:
         result = (value * ureg(from_unit)).to(to_unit)
-        return f"{value} {from_unit} = {result}"
+        return f"🎯 {value} {from_unit} = {result}"
     except pint.DimensionalityError:
-        return "❌ Invalid unit conversion!"
+        return "❌ Invalid unit conversion! Please check units."
     except Exception:
-        return "⚠️ Please enter valid numbers and unit names."
+        return "⚠️ Error: Enter a valid number and correct unit names."
 
-# Function: AI Assistant (Gemini AI)
-def ask_gemini(prompt):
+# 🤖 Function: AI Assistant Response
+def get_ai_response(prompt):
     try:
         if api_key:
             model = genai.GenerativeModel("gemini-1.5-flash")
             response = model.generate_content(prompt)
             return response.text if response else "⚠️ No response from AI!"
         else:
-            return "❌ API Key not found! Please configure it."
+            return "❌ API Key not found! Set it up in .env file."
     except Exception as e:
         return f"🚨 AI Error: {str(e)}"
 
-# Streamlit App Configuration
-st.set_page_config(page_title="🔄 Universal Unit Converter", page_icon="♾️", layout="wide")
+# 🌟 Streamlit App Configuration
+st.set_page_config(
+    page_title="🧮 Smart Unit Converter & AI Assistant", 
+    page_icon="🔢", 
+    layout="wide"
+)
 
-# Sidebar Options
-st.sidebar.title("⚙️ Options")
-mode = st.sidebar.radio("Choose a Mode:", ["📏 Unit Converter", "🤖 AI Assistant", "📚 Conversion Table"])
+# 🎨 Sidebar Design
+st.sidebar.image("https://cdn-icons-png.flaticon.com/512/3074/3074350.png", width=100)
+st.sidebar.title("🔧 **Options Panel**")
+mode = st.sidebar.radio("📌 Select a Feature:", ["📏 Unit Conversion", "💡 AI Assistant", "📚 Quick Conversion Guide"])
 
-st.title("♾️ Universal Unit Converter & AI Assistant")
-st.write("Easily convert units and get AI-powered responses!")
+# 🎯 Title
+st.markdown("<h1 style='text-align:center;'>🧮 Smart Unit Converter & AI Bot 🤖</h1>", unsafe_allow_html=True)
+st.write("🚀 *Easily convert units & get instant AI assistance!*")
 
-# 1️⃣ Unit Converter Section
-if mode == "📏 Unit Converter":
-    st.subheader("📐 Unit Converter")
-    
-    col1, col2, col3 = st.columns([1, 1, 1])
-    
+# 📏 **UNIT CONVERSION SECTION**
+if mode == "📏 Unit Conversion":
+    st.subheader("📐 **Unit Converter** 🔄")
+
+    col1, col2, col3 = st.columns(3)
+
     with col1:
-        value = st.text_input("🔢 Enter value:", placeholder="e.g., 10")
-    
+        value = st.text_input("🔢 Enter Value:", placeholder="e.g., 25")
+
     with col2:
-        from_unit = st.text_input("📏 From unit:", placeholder="e.g., meters")
-    
+        from_unit = st.text_input("📏 Convert From:", placeholder="e.g., inches")
+
     with col3:
-        to_unit = st.text_input("🔄 To unit:", placeholder="e.g., feet")
-    
+        to_unit = st.text_input("🔄 Convert To:", placeholder="e.g., centimeters")
+
     if st.button("🚀 Convert Now", use_container_width=True):
         if value and from_unit and to_unit:
             try:
                 value = float(value)
                 result = convert_units(value, from_unit, to_unit)
-                st.success(f"✅ {result}")
+                st.success(result)
             except ValueError:
-                st.error("❌ Please enter a valid numeric value.")
+                st.error("❌ Invalid number format!")
         else:
-            st.warning("⚠️ Please fill all fields correctly.")
+            st.warning("⚠️ Fill all fields before converting.")
 
-# 2️⃣ AI Assistant Section
-elif mode == "🤖 AI Assistant":
-    st.subheader("🤖 AI Assistant")
-    
-    user_query = st.text_area("💬 Ask anything:", placeholder="Type your question here...")
-    
+# 💡 **AI ASSISTANT SECTION**
+elif mode == "💡 AI Assistant":
+    st.subheader("🤖 **Ask AI Anything!** 🧠")
+
+    user_question = st.text_area("💬 Type your query below:", placeholder="E.g., How does AI work?")
+
     if st.button("🚀 Get Answer", use_container_width=True):
-        if user_query:
-            ai_response = ask_gemini(user_query)
-            st.success(f"🤖 {ai_response}")
+        if user_question:
+            ai_answer = get_ai_response(user_question)
+            st.success(f"🤖 AI Response: {ai_answer}")
         else:
             st.error("⚠️ Please enter a question.")
 
-# 3️⃣ Conversion Table Section
-elif mode == "📚 Conversion Table":
-    st.subheader("📚 Common Unit Conversions")
-    
-    conversion_data = {
-        "Length": ["1 meter = 3.281 feet", "1 kilometer = 0.621 miles"],
-        "Weight": ["1 kilogram = 2.205 pounds", "1 gram = 0.035 ounces"],
-        "Temperature": ["0°C = 32°F", "100°C = 212°F"],
-        "Volume": ["1 liter = 4.227 cups", "1 gallon = 3.785 liters"],
-    }
-    
-    for category, conversions in conversion_data.items():
-        with st.expander(f"📌 {category}"):
-            for conversion in conversions:
-                st.write(f"🔹 {conversion}")
+# 📚 **CONVERSION REFERENCE TABLE**
+elif mode == "📚 Quick Conversion Guide":
+    st.subheader("📘 **Quick Unit Conversion Guide**")
 
-# Footer
+    conversions = {
+        "📏 Length": ["1 meter = 3.281 feet", "1 mile = 1.609 km"],
+        "⚖️ Weight": ["1 kg = 2.205 pounds", "1 gram = 0.035 ounces"],
+        "🌡️ Temperature": ["0°C = 32°F", "100°C = 212°F"],
+        "🧪 Volume": ["1 liter = 4.227 cups", "1 gallon = 3.785 liters"],
+    }
+
+    for category, values in conversions.items():
+        with st.expander(f"{category}"):
+            for conversion in values:
+                st.write(f"✅ {conversion}")
+
+# 🔻 Footer
 st.markdown("---")
-st.markdown("🚀 Developed by *Your Name* | Powered by *Gemini AI & Streamlit*")
-                         
+st.markdown("<h4 style='text-align:center;'>🚀 Created by *Zaryab Irfan* | Powered by AI & Streamlit</h4>", unsafe_allow_html=True)
+            
