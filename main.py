@@ -1,22 +1,15 @@
 import streamlit as st
 import pint
-import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 
 # Load environment variables
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
-
-# Configure Gemini API
-if api_key:
-    genai.configure(api_key=api_key)
-else:
-    st.error("⚠️ Gemini API key not found. Please check your .env file.")
 
 # Unit conversion setup
 ureg = pint.UnitRegistry()
 
+# Function to convert units
 def convert_units(value, from_unit, to_unit):
     try:
         result = (value * ureg(from_unit.lower())).to(to_unit.lower())
@@ -26,28 +19,58 @@ def convert_units(value, from_unit, to_unit):
     except Exception:
         return "⚠️ Please enter a valid numeric value and unit names."
 
-def ask_gemini(prompt):
-    try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        response = model.generate_content(prompt)
-        if response and hasattr(response, 'text'):
-            return response.text
-        return "⚠️ No valid response received from Gemini AI."
-    except Exception as e:
-        return f"❌ Error: {str(e)}"
+# Streamlit UI Setup
+st.set_page_config(page_title="Elegant Unit Converter", page_icon="♾️", layout="centered")
 
-# Streamlit UI setup
-st.set_page_config(page_title="Gemini Unit Converter", page_icon="♾️", layout="wide")
-st.sidebar.title("🛠️ Settings")
-mode = st.sidebar.radio("Select Options:", ["Unit Converter", "AI Assistant", "Units & Conversions Table"])
-st.sidebar.markdown("Effortlessly transform your *UNITS🔮*")
+# Custom Styling
+st.markdown("""
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .title {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+        }
+        .stTextInput, .stNumberInput {
+            border-radius: 10px !important;
+            padding: 10px !important;
+            background-color: #f5f5f5 !important;
+        }
+        .convert-btn {
+            background-color: #3498db !important;
+            color: white !important;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 10px !important;
+            width: 100%;
+        }
+        .success-message {
+            font-size: 1.2em;
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .warning-message {
+            font-size: 1.1em;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-st.title("♾️ Gemini-Powered Unit Converter")
-st.write("Easily convert units and ask AI-powered questions!")
+st.markdown('<p class="title">♾️ Elegant Unit Converter</p>', unsafe_allow_html=True)
+st.write("Convert units quickly and accurately with a sleek interface!")
 
-# Unit Converter Mode
+# Sidebar Navigation
+st.sidebar.title("🔄 Unit Converter Menu")
+mode = st.sidebar.radio("Choose an option:", ["Unit Converter", "Units & Conversions Table"])
+st.sidebar.markdown("---")
+
+# Unit Converter Section
 if mode == "Unit Converter":
-    st.subheader("🔮 Unit Converter")
+    st.subheader("📏 Convert Units Instantly")
     
     col1, col2, col3 = st.columns([1, 1, 1])
     
@@ -60,14 +83,37 @@ if mode == "Unit Converter":
     with col3:
         to_unit = st.text_input("🔄 To unit:", placeholder="e.g., feet")
     
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     if st.button("🚀 Convert Now", use_container_width=True):
         if value and from_unit and to_unit:
             try:
                 value = float(value)
                 result = convert_units(value, from_unit, to_unit)
-                st.success(f"✅ {result}")
+                st.markdown(f'<p class="success-message">✅ {result}</p>', unsafe_allow_html=True)
             except ValueError:
-                st.error("❌ Please enter a valid numeric value.")
+                st.markdown('<p class="warning-message">❌ Please enter a valid numeric value.</p>', unsafe_allow_html=True)
         else:
-            st.warning("⚠️ Please fill in all fields correctly.
+            st.markdown('<p class="warning-message">⚠️ Please fill in all fields correctly.</p>', unsafe_allow_html=True)
+
+# Units & Conversions Table
+elif mode == "Units & Conversions Table":
+    st.subheader("📌 Common Units & Conversions")
+    st.write("A handy reference guide for everyday conversions.")
+    
+    conversion_data = {
+        "Length": ["1 meter = 3.281 feet", "1 kilometer = 0.621 miles"],
+        "Weight": ["1 kilogram = 2.205 pounds", "1 gram = 0.035 ounces"],
+        "Temperature": ["0°C = 32°F", "100°C = 212°F"],
+        "Volume": ["1 liter = 4.227 cups", "1 gallon = 3.785 liters"],
+    }
+    
+    for category, conversions in conversion_data.items():
+        with st.expander(f"📌 {category}"):
+            for conversion in conversions:
+                st.write(f"🔹 {conversion}")
+
+# Footer
+st.markdown("---")
+st.markdown("Developed by *Zaryab Irfan* | Powered by *Streamlit*")
 
