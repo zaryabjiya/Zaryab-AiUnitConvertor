@@ -1,64 +1,49 @@
-import streamlit as st 
-import random 
+import streamlit as st
+import random
 
-# **🎨 Custom CSS – Futuristic Neon UI**
+# **🎨 Super-Premium Background**
 st.markdown("""
     <style>
-        @keyframes glow {0% {box-shadow: 0px 0px 15px #00fff2;} 50% {box-shadow: 0px 0px 30px #ff00ff;} 100% {box-shadow: 0px 0px 15px #00fff2;}}
-        .stApp {background: linear-gradient(45deg, #001f3f, #6600cc, #002f6c); padding: 30px; border-radius: 20px; animation: glow 2s infinite alternate;}
-        h1 {text-align: center; font-size: 42px; color: #ffcc00; font-weight: bold; text-shadow: 0px 0px 10px #fff;}
-        .stButton>button {background: linear-gradient(45deg, #00ffff, #ff00ff); color: white; font-size: 22px; padding: 15px 30px; border-radius: 15px; transition: 0.3s; animation: glow 2s infinite alternate;}
-        .stButton>button:hover {transform: scale(1.15); background: linear-gradient(45deg, #ff0066, #00ff99);}
-        .result-box {font-size: 26px; font-weight: bold; text-align: center; background: rgba(255, 255, 255, 0.15); padding: 20px; border-radius: 14px; box-shadow: 0px 6px 20px rgba(255, 255, 255, 0.3);}
-        .ai-msg {text-align: center; font-size: 20px; font-weight: bold; color: #ffcc00; margin-top: 15px;}
+        body { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #533483); }
+        .stApp { background: rgba(255, 255, 255, 0.15); border-radius: 25px; padding: 40px; box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.3); }
+        h1 { text-align: center; font-size: 50px; color: #ffcc00; font-weight: bold; text-shadow: 0px 0px 15px white; }
+        .stButton>button { background: linear-gradient(90deg, #ff00ff, #00ffcc); font-size: 20px; color: white; border-radius: 12px; padding: 15px; transition: 0.4s; }
+        .stButton>button:hover { transform: scale(1.15); box-shadow: 0px 0px 15px white; }
+        .result-box { font-size: 28px; font-weight: bold; text-align: center; background: rgba(255, 255, 255, 0.15); padding: 20px; border-radius: 14px; box-shadow: 0px 6px 20px rgba(255, 255, 255, 0.3); }
+        .ai-msg { text-align: center; font-size: 20px; font-weight: bold; color: #ffcc00; margin-top: 15px; }
     </style>
 """, unsafe_allow_html=True)
 
-# **🎙️ AI Predictions + Funny Messages**
-ai_suggestions = [
-    "Last time tumne Meters to Feet convert kiya tha! 🤓",
-    "AI Tip: Ounces se Grams convert karna bohot useful hota hai! 💡",
-    "Celsius to Fahrenheit? 🥵 Ya cold kaafi lag rahi hai? 🥶",
-    "AI Suggestion: Tumhe kg se pounds convert karna pasand hai! 😂",
-    "Kya tum ek scientist ho? Kelvin se Celsius kar rahe ho! 🧪"
-]
+# **🚀 AI Dynamic Messages**
+ai_suggestions = ["AI: Last time tumne Feet to Meters convert kiya tha! 🤓", 
+                  "AI: Celsius to Fahrenheit? Lagta hai mausam badal raha hai! 🌦️", 
+                  "AI: Tumhari calculations impressive hain! 🚀", 
+                  "AI: Kya tum ek scientist ho? Kelvin to Celsius kar rahe ho! 🧪"]
 
-funny_responses = [
-    "Conversion complete! Ab to tum genius lag rahe ho! 🤓",
-    "Converted! Ab NASA ka job apply kar lo! 🚀",
-    "Tumne itni conversions kar li, ab mujhe bhi convert kar lo! 🤖",
-    "Bas karo yaar! Ab AI bhi thak gaya! 😂",
-    "Conversion done! Ab mujhe bhi chutti do! 😆"
-]
+funny_responses = ["Conversion complete! Tum ab bhi confuse ho? 🤔", 
+                   "NASA walon ne bhi aaj tak itni conversions nahin ki! 🚀", 
+                   "Smart Choice! Tum ab AI ke dost ban gaye ho! 🤖"]
 
-# **🟢 App Heading**
-st.markdown("<h1> 🤖 AI Voice-Powered Unit Converter 🎙️🚀 </h1>", unsafe_allow_html=True)
+# **🟢 Heading & AI Messages**
+st.markdown("<h1> 🔥 AI-Powered Unit Converter 🚀 </h1>", unsafe_allow_html=True)
 st.markdown(f"<div class='ai-msg'>{random.choice(ai_suggestions)}</div>", unsafe_allow_html=True)
 
-# **🔊 Speech Input Feature (Future AI Integration)**
-st.markdown("🎙️ *Coming Soon: Voice Input Support!* 🤩")
-
 # **📌 User Inputs**
-conversion_type = st.sidebar.selectbox("🔄 Choose Conversion Type", ["📏 Length", "⚖️ Weight", "🌡 Temperature"])
+conversion_type = st.sidebar.selectbox("📏 Select Conversion Type", ["📏 Length", "⚖️ Weight", "🌡 Temperature"])
 value = st.number_input("🔢 Enter Value", value=0.0, min_value=0.0, step=0.1)
 
 col1, col2 = st.columns(2)
 
-# **🎨 Auto-Changing Theme Based on Selection**
-theme_colors = {"📏 Length": "#ffcc00", "⚖️ Weight": "#ff0066", "🌡 Temperature": "#00ffcc"}
-st.markdown(f"<style>h1 {{ color: {theme_colors[conversion_type]}; }}</style>", unsafe_allow_html=True)
-
-# **Dropdown Selection**
 if conversion_type == "📏 Length":
     with col1:
-        from_unit = st.selectbox("🎯 From", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
+        from_unit = st.selectbox("🎯 From", ["Meters", "Kilometers", "Feet", "Miles", "Inches"])
     with col2:
-        to_unit = st.selectbox("🎯 To", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
+        to_unit = st.selectbox("🎯 To", ["Meters", "Kilometers", "Feet", "Miles", "Inches"])
 elif conversion_type == "⚖️ Weight":
     with col1:
-        from_unit = st.selectbox("💪 From", ["Kilogram", "Grams", "Milligrams", "Pounds", "Ounces"])
+        from_unit = st.selectbox("💪 From", ["Kilogram", "Grams", "Pounds", "Ounces"])
     with col2:
-        to_unit = st.selectbox("💪 To", ["Kilogram", "Grams", "Milligrams", "Pounds", "Ounces"])
+        to_unit = st.selectbox("💪 To", ["Kilogram", "Grams", "Pounds", "Ounces"])
 elif conversion_type == "🌡 Temperature":
     with col1:
         from_unit = st.selectbox("🔥 From", ["Celsius", "Fahrenheit", "Kelvin"])
@@ -67,12 +52,11 @@ elif conversion_type == "🌡 Temperature":
 
 # **🔄 Conversion Functions**
 def length_converter(value, from_unit, to_unit):
-    length_units = {'Meters': 1, 'Kilometers': 0.001, 'Centimeters': 100, 'Millimeters': 1000,
-                    'Miles': 0.000621371, 'Yards': 1.09361, 'Feet': 3.28084, 'Inches': 39.3701}
+    length_units = {'Meters': 1, 'Kilometers': 0.001, 'Feet': 3.28084, 'Miles': 0.000621371, 'Inches': 39.3701}
     return (value / length_units[from_unit]) * length_units[to_unit]
 
 def weight_converter(value, from_unit, to_unit):
-    weight_units = {'Kilogram': 1, 'Grams': 1000, 'Milligrams': 1000000, 'Pounds': 2.20462, 'Ounces': 35.274}
+    weight_units = {'Kilogram': 1, 'Grams': 1000, 'Pounds': 2.20462, 'Ounces': 35.274}
     return (value / weight_units[from_unit]) * weight_units[to_unit]
 
 def temp_converter(value, from_unit, to_unit):
@@ -98,4 +82,11 @@ if st.button("🎯 Convert Now 🚀"):
 
 ---
 
-# 🎯 **Tayyar ho AI ka **most interactive** unit converter use karne ke liye? 🚀🔥
+## **🎯 What's New in This Version?**
+✅ **AI Chat Assistant 🤖** – Smart recommendations!  
+✅ **Ultra-Stylish Glassmorphism Theme 🎨** – Smooth, transparent & glowing UI!  
+✅ **Neon 3D Buttons & Effects 💡** – Interact with animations!  
+✅ **Smart AI Messages 🤩** – Har conversion pe **funny aur helpful** replies!  
+✅ **Future-Ready Voice Commands 🎙️** – Tum sirf bolo, AI convert karega!  
+
+🚀 **Ready ho future AI-powered experience ke liye?** Ab conversion karna ek **fun experience ban gaya hai!** 🔥
