@@ -1,10 +1,11 @@
 import streamlit as st 
 
+# Custom Styling
 st.markdown(
     """
     <style>
     .stApp {
-        background: linear-gradient(135deg, #141e30, #243b55);
+        background: linear-gradient(135deg, #1c1c1c, #2c3e50);
         padding: 30px;
         border-radius: 15px;
         box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
@@ -12,43 +13,44 @@ st.markdown(
     }
     h1 {
         text-align: center;
-        font-size: 40px;
-        color: #ffcc00;
+        font-size: 38px;
+        color: #e6af2e;
         font-weight: bold;
-        text-shadow: 2px 2px 5px rgba(255, 204, 0, 0.5);
+        text-shadow: 2px 2px 5px rgba(230, 175, 46, 0.5);
     }
     .stButton>button {
-        background: linear-gradient(45deg, #ff5733, #ffcc00);
+        background: linear-gradient(45deg, #e6af2e, #ff8c00);
         color: white;
-        font-size: 20px;
-        padding: 12px 24px;
-        border-radius: 15px;
+        font-size: 18px;
+        padding: 10px 20px;
+        border-radius: 12px;
         transition: 0.3s ease-in-out;
-        box-shadow: 0px 5px 15px rgba(255, 87, 51, 0.5);
+        box-shadow: 0px 5px 15px rgba(230, 175, 46, 0.4);
         border: none;
         font-weight: bold;
     }
     .stButton>button:hover {
-        transform: scale(1.1);
-        background: linear-gradient(45deg, #00c9ff, #92fe9d);
+        transform: scale(1.05);
+        background: linear-gradient(45deg, #ff8c00, #ffcc33);
         color: black;
     }
     .result-box {
         font-size: 22px;
         font-weight: bold;
         text-align: center;
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.15);
         padding: 20px;
         border-radius: 12px;
         margin-top: 20px;
-        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.3);
+        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.2);
         color: white;
+        backdrop-filter: blur(8px);
     }
     .footer {
         text-align: center;
         margin-top: 50px;
         font-size: 14px;
-        color: #ffcc00;
+        color: #e6af2e;
         font-weight: bold;
     }
     </style>
@@ -57,31 +59,31 @@ st.markdown(
 )
 
 # Title and description
-st.markdown("<h1> ✨ Unit Converter with a Fresh Look ✨ </h1>", unsafe_allow_html=True)
-st.write("Easily convert between different units of length, weight, and temperature with style!")
+st.markdown("<h1>⚡ Elegant Unit Converter ⚡</h1>", unsafe_allow_html=True)
+st.write("Seamlessly convert between different units of length, weight, and temperature with style!")
 
 # Sidebar menu
-conversion_type = st.sidebar.selectbox("Choose Conversion Type", ["Length", "Weight", "Temperature"])
-value = st.number_input("Enter Value", value=0.0, min_value=0.0, step=0.1)
+conversion_type = st.sidebar.radio("🔄 Choose Conversion Type:", ["Length", "Weight", "Temperature"])
+value = st.number_input("🔢 Enter Value:", value=0.0, min_value=0.0, step=0.1)
 
 col1, col2 = st.columns(2)
 
 # Conversion options
 if conversion_type == "Length":
     with col1:
-        from_unit = st.selectbox("From", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
+        from_unit = st.selectbox("📏 From:", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
     with col2:
-        to_unit = st.selectbox("To", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
+        to_unit = st.selectbox("📐 To:", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
 elif conversion_type == "Weight":
     with col1:
-        from_unit = st.selectbox("From", ["Kilogram", "Grams", "Milligrams", "Pounds", "Ounces"])
+        from_unit = st.selectbox("⚖️ From:", ["Kilogram", "Grams", "Milligrams", "Pounds", "Ounces"])
     with col2:
-        to_unit = st.selectbox("To", ["Kilogram", "Grams", "Milligrams", "Pounds", "Ounces"])
+        to_unit = st.selectbox("🛠 To:", ["Kilogram", "Grams", "Milligrams", "Pounds", "Ounces"])
 elif conversion_type == "Temperature":
     with col1:
-        from_unit = st.selectbox("From", ["Celsius", "Fahrenheit", "Kelvin"])
+        from_unit = st.selectbox("🌡 From:", ["Celsius", "Fahrenheit", "Kelvin"])
     with col2:
-        to_unit = st.selectbox("To", ["Celsius", "Fahrenheit", "Kelvin"])
+        to_unit = st.selectbox("🔥 To:", ["Celsius", "Fahrenheit", "Kelvin"])
 
 # Conversion functions
 def length_converter(value, from_unit, to_unit):
@@ -107,7 +109,7 @@ def temp_converter(value, from_unit, to_unit):
     return value
 
 # Button for conversion
-if st.button("🔥 Convert Now 🔥"):
+if st.button("🚀 Convert Now"):
     if conversion_type == "Length":
         result = length_converter(value, from_unit, to_unit)
     elif conversion_type == "Weight":
@@ -118,6 +120,6 @@ if st.button("🔥 Convert Now 🔥"):
     st.markdown(f"<div class='result-box'>{value} {from_unit} = {result:.4f} {to_unit}</div>", unsafe_allow_html=True)        
 
 # Footer
-st.markdown("---")
-st.markdown("Developed by *Zaryab Irfan* | Powered by *Streamlit*")
+st.markdown("<div class='footer'>✨ Developed by Zaryab Irfan ✨</div>", unsafe_allow_html=True) 
+
 
