@@ -5,53 +5,54 @@ st.markdown(
     """
     <style>
     .stApp {
-        background: linear-gradient(135deg, #1c1c1c, #2c3e50);
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         padding: 30px;
         border-radius: 15px;
-        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4);
         color: white;
     }
     h1 {
         text-align: center;
-        font-size: 38px;
-        color: #e6af2e;
+        font-size: 42px;
+        color: #ff00ff;
         font-weight: bold;
-        text-shadow: 2px 2px 5px rgba(230, 175, 46, 0.5);
+        text-shadow: 2px 2px 8px rgba(255, 0, 255, 0.6);
     }
     .stButton>button {
-        background: linear-gradient(45deg, #e6af2e, #ff8c00);
+        background: linear-gradient(45deg, #ff0099, #ff6600);
         color: white;
-        font-size: 18px;
-        padding: 10px 20px;
-        border-radius: 12px;
+        font-size: 20px;
+        padding: 12px 24px;
+        border-radius: 15px;
         transition: 0.3s ease-in-out;
-        box-shadow: 0px 5px 15px rgba(230, 175, 46, 0.4);
+        box-shadow: 0px 5px 20px rgba(255, 0, 153, 0.6);
         border: none;
         font-weight: bold;
     }
     .stButton>button:hover {
-        transform: scale(1.05);
-        background: linear-gradient(45deg, #ff8c00, #ffcc33);
+        transform: scale(1.1);
+        background: linear-gradient(45deg, #00ffcc, #ff33cc);
         color: black;
     }
     .result-box {
-        font-size: 22px;
+        font-size: 24px;
         font-weight: bold;
         text-align: center;
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.1);
         padding: 20px;
-        border-radius: 12px;
+        border-radius: 15px;
         margin-top: 20px;
-        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.2);
+        box-shadow: 0px 5px 20px rgba(255, 255, 255, 0.3);
         color: white;
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(12px);
     }
     .footer {
         text-align: center;
         margin-top: 50px;
-        font-size: 14px;
-        color: #e6af2e;
+        font-size: 16px;
+        color: #ff00ff;
         font-weight: bold;
+        text-shadow: 1px 1px 5px rgba(255, 0, 255, 0.5);
     }
     </style>
     """, 
@@ -59,11 +60,11 @@ st.markdown(
 )
 
 # Title and description
-st.markdown("<h1>⚡ Elegant Unit Converter ⚡</h1>", unsafe_allow_html=True)
-st.write("Seamlessly convert between different units of length, weight, and temperature with style!")
+st.markdown("<h1>🚀 Advanced Unit Converter 🚀</h1>", unsafe_allow_html=True)
+st.write("Convert units with a **futuristic look** and smooth animations!")
 
 # Sidebar menu
-conversion_type = st.sidebar.radio("🔄 Choose Conversion Type:", ["Length", "Weight", "Temperature"])
+conversion_type = st.sidebar.radio("⚡ Select Conversion Type:", ["Length", "Weight", "Temperature"])
 value = st.number_input("🔢 Enter Value:", value=0.0, min_value=0.0, step=0.1)
 
 col1, col2 = st.columns(2)
@@ -109,7 +110,7 @@ def temp_converter(value, from_unit, to_unit):
     return value
 
 # Button for conversion
-if st.button("🚀 Convert Now"):
+if st.button("✨ Convert Now ✨"):
     if conversion_type == "Length":
         result = length_converter(value, from_unit, to_unit)
     elif conversion_type == "Weight":
@@ -121,5 +122,3 @@ if st.button("🚀 Convert Now"):
 
 # Footer
 st.markdown("<div class='footer'>✨ Developed by Zaryab Irfan ✨</div>", unsafe_allow_html=True) 
-
-
