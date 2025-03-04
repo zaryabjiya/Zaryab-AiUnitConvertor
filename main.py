@@ -1,92 +1,113 @@
 import streamlit as st
-import random
+import pint
+import google.generativeai as genai
+from dotenv import load_dotenv
+import os
 
-# **🎨 Super-Premium Background**
-st.markdown("""
-    <style>
-        body { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #533483); }
-        .stApp { background: rgba(255, 255, 255, 0.15); border-radius: 25px; padding: 40px; box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.3); }
-        h1 { text-align: center; font-size: 50px; color: #ffcc00; font-weight: bold; text-shadow: 0px 0px 15px white; }
-        .stButton>button { background: linear-gradient(90deg, #ff00ff, #00ffcc); font-size: 20px; color: white; border-radius: 12px; padding: 15px; transition: 0.4s; }
-        .stButton>button:hover { transform: scale(1.15); box-shadow: 0px 0px 15px white; }
-        .result-box { font-size: 28px; font-weight: bold; text-align: center; background: rgba(255, 255, 255, 0.15); padding: 20px; border-radius: 14px; box-shadow: 0px 6px 20px rgba(255, 255, 255, 0.3); }
-        .ai-msg { text-align: center; font-size: 20px; font-weight: bold; color: #ffcc00; margin-top: 15px; }
-    </style>
-""", unsafe_allow_html=True)
+# Load environment variables
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
 
-# **🚀 AI Dynamic Messages**
-ai_suggestions = ["AI: Last time tumne Feet to Meters convert kiya tha! 🤓", 
-                  "AI: Celsius to Fahrenheit? Lagta hai mausam badal raha hai! 🌦️", 
-                  "AI: Tumhari calculations impressive hain! 🚀", 
-                  "AI: Kya tum ek scientist ho? Kelvin to Celsius kar rahe ho! 🧪"]
+# Initialize Gemini AI
+genai.configure(api_key=api_key)
 
-funny_responses = ["Conversion complete! Tum ab bhi confuse ho? 🤔", 
-                   "NASA walon ne bhi aaj tak itni conversions nahin ki! 🚀", 
-                   "Smart Choice! Tum ab AI ke dost ban gaye ho! 🤖"]
+# Initialize Pint for unit conversion
+ureg = pint.UnitRegistry()
 
-# **🟢 Heading & AI Messages**
-st.markdown("<h1> 🔥 AI-Powered Unit Converter 🚀 </h1>", unsafe_allow_html=True)
-st.markdown(f"<div class='ai-msg'>{random.choice(ai_suggestions)}</div>", unsafe_allow_html=True)
+# Function to convert units
+def convert_units(value, from_unit, to_unit):
+    try:
+        result = (value * ureg(from_unit.lower())).to(to_unit.lower())
+        return f"{value} {from_unit} = {result}"
+    except pint.DimensionalityError:
+        return "Invalid conversion"
+    except Exception:
+        return "Please enter a valid numeric value and unit names."
 
-# **📌 User Inputs**
-conversion_type = st.sidebar.selectbox("📏 Select Conversion Type", ["📏 Length", "⚖️ Weight", "🌡 Temperature"])
-value = st.number_input("🔢 Enter Value", value=0.0, min_value=0.0, step=0.1)
+# Function to interact with Gemini AI
+def ask_gemini(prompt):
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
+    return response.text if response else "Error fetching response"
 
-col1, col2 = st.columns(2)
+# Streamlit Page Configuration
+st.set_page_config(page_title="Unit Converter & AI Assistant", page_icon="🔢", layout="wide")
 
-if conversion_type == "📏 Length":
+# Sidebar for settings
+st.sidebar.title("Settings")
+mode = st.sidebar.radio("Choose Mode:", ["Unit Converter", "AI Assistant", "Units & Conversion Table"])
+
+# Dark/Light Mode Toggle
+theme = st.sidebar.radio("Select Theme:", ["Light Mode", "Dark Mode"])
+
+if theme == "Dark Mode":
+    st.markdown(
+        """
+        <style>
+        body { background-color: #121212; color: white; }
+        .stTextInput, .stNumberInput { background-color: #1E1E1E !important; color: white !important; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+st.title("Unit Converter & AI Assistant")
+st.write("Easily convert units and get AI-powered answers!")
+
+# Unit Converter Section
+if mode == "Unit Converter":
+    st.subheader("Unit Converter")
+    st.markdown("Enter details below to convert units.")
+
+    col1, col2, col3 = st.columns(3)
+
     with col1:
-        from_unit = st.selectbox("🎯 From", ["Meters", "Kilometers", "Feet", "Miles", "Inches"])
+        value = st.text_input("Enter Value:", placeholder="e.g., 10")
+
     with col2:
-        to_unit = st.selectbox("🎯 To", ["Meters", "Kilometers", "Feet", "Miles", "Inches"])
-elif conversion_type == "⚖️ Weight":
-    with col1:
-        from_unit = st.selectbox("💪 From", ["Kilogram", "Grams", "Pounds", "Ounces"])
-    with col2:
-        to_unit = st.selectbox("💪 To", ["Kilogram", "Grams", "Pounds", "Ounces"])
-elif conversion_type == "🌡 Temperature":
-    with col1:
-        from_unit = st.selectbox("🔥 From", ["Celsius", "Fahrenheit", "Kelvin"])
-    with col2:
-        to_unit = st.selectbox("🔥 To", ["Celsius", "Fahrenheit", "Kelvin"])
+        from_unit = st.text_input("From Unit:", placeholder="e.g., meters")
 
-# **🔄 Conversion Functions**
-def length_converter(value, from_unit, to_unit):
-    length_units = {'Meters': 1, 'Kilometers': 0.001, 'Feet': 3.28084, 'Miles': 0.000621371, 'Inches': 39.3701}
-    return (value / length_units[from_unit]) * length_units[to_unit]
+    with col3:
+        to_unit = st.text_input("To Unit:", placeholder="e.g., feet")
 
-def weight_converter(value, from_unit, to_unit):
-    weight_units = {'Kilogram': 1, 'Grams': 1000, 'Pounds': 2.20462, 'Ounces': 35.274}
-    return (value / weight_units[from_unit]) * weight_units[to_unit]
+    if st.button("Convert Now"):
+        if value and from_unit and to_unit:
+            try:
+                value = float(value)
+                result = convert_units(value, from_unit, to_unit)
+                st.success(result)
+            except ValueError:
+                st.error("Please enter a valid numeric value.")
+        else:
+            st.warning("Please fill in all fields correctly.")
 
-def temp_converter(value, from_unit, to_unit):
-    if from_unit == "Celsius":
-        return (value * 9/5 + 32) if to_unit == "Fahrenheit" else (value + 273.15) if to_unit == "Kelvin" else value
-    elif from_unit == "Fahrenheit":
-        return ((value - 32) * 5/9) if to_unit == "Celsius" else ((value - 32) * 5/9 + 273.15) if to_unit == "Kelvin" else value
-    elif from_unit == "Kelvin":
-        return (value - 273.15) if to_unit == "Celsius" else ((value - 273.15) * 9/5 + 32) if to_unit == "Fahrenheit" else value
-    return value
+# AI Assistant Section
+elif mode == "AI Assistant":
+    st.subheader("AI Chat Assistant")
+    user_query = st.text_area("Ask anything:", placeholder="Type your question here...")
 
-# **🚀 Convert Button**
-if st.button("🎯 Convert Now 🚀"):
-    if conversion_type == "📏 Length":
-        result = length_converter(value, from_unit, to_unit)
-    elif conversion_type == "⚖️ Weight":
-        result = weight_converter(value, from_unit, to_unit)
-    elif conversion_type == "🌡 Temperature":
-        result = temp_converter(value, from_unit, to_unit)
+    if st.button("Get Answer"):
+        if user_query:
+            ai_response = ask_gemini(user_query)
+            st.success(ai_response)
+        else:
+            st.error("Please enter a question.")
 
-    st.markdown(f"<div class='result-box'>✅ {value} {from_unit} = {result:.4f} {to_unit} 🎉</div>", unsafe_allow_html=True)
-    st.markdown(f"<div class='ai-msg'>{random.choice(funny_responses)}</div>", unsafe_allow_html=True)
+# Units & Conversion Table
+elif mode == "Units & Conversion Table":
+    st.subheader("Common Units & Conversions")
+    conversion_data = {
+        "Length": ["1 meter = 3.281 feet", "1 kilometer = 0.621 miles"],
+        "Weight": ["1 kilogram = 2.205 pounds", "1 gram = 0.035 ounces"],
+        "Temperature": ["0°C = 32°F", "100°C = 212°F"],
+        "Volume": ["1 liter = 4.227 cups", "1 gallon = 3.785 liters"],
+    }
 
----
+    for category, conversions in conversion_data.items():
+        with st.expander(category):
+            for conversion in conversions:
+                st.write(conversion)
 
-## **🎯 What's New in This Version?**
-✅ **AI Chat Assistant 🤖** – Smart recommendations!  
-✅ **Ultra-Stylish Glassmorphism Theme 🎨** – Smooth, transparent & glowing UI!  
-✅ **Neon 3D Buttons & Effects 💡** – Interact with animations!  
-✅ **Smart AI Messages 🤩** – Har conversion pe **funny aur helpful** replies!  
-✅ **Future-Ready Voice Commands 🎙️** – Tum sirf bolo, AI convert karega!  
-
-🚀 **Ready ho future AI-powered experience ke liye?** Ab conversion karna ek **fun experience ban gaya hai!** 🔥
+# Footer
+st.markdown("---")
+st.markdown("Developed by Your Name | Powered by Gemini AI & Streamlit")
