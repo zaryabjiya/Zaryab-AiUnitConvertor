@@ -1,6 +1,5 @@
 import streamlit as st 
 
-# Custom Styling
 st.markdown(
     """
     <style>
@@ -59,17 +58,15 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Title and description
 st.markdown("<h1>🚀 Unit Converter 🚀</h1>", unsafe_allow_html=True)
+st.markdown("<h1>📏 Convert Length, Weight & Temperature Instantly! ⚖️🌡️</h1>", unsafe_allow_html=True)
 st.write("Convert units with a **futuristic look** and smooth animations!")
 
-# Sidebar menu
 conversion_type = st.sidebar.radio("⚡ Select Conversion Type:", ["Length", "Weight", "Temperature"])
 value = st.number_input("🔢 Enter Value:", value=0.0, min_value=0.0, step=0.1)
 
 col1, col2 = st.columns(2)
 
-# Conversion options
 if conversion_type == "Length":
     with col1:
         from_unit = st.selectbox("📏 From:", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
@@ -86,7 +83,6 @@ elif conversion_type == "Temperature":
     with col2:
         to_unit = st.selectbox("🔥 To:", ["Celsius", "Fahrenheit", "Kelvin"])
 
-# Conversion functions
 def length_converter(value, from_unit, to_unit):
     length_units = {
         'Meters': 1, 'Kilometers': 0.001, 'Centimeters': 100, 'Millimeters': 1000,
@@ -109,7 +105,6 @@ def temp_converter(value, from_unit, to_unit):
         return (value - 273.15) if to_unit == "Celsius" else ((value - 273.15) * 9/5 + 32) if to_unit == "Fahrenheit" else value
     return value
 
-# Button for conversion
 if st.button("✨ Convert Now ✨"):
     if conversion_type == "Length":
         result = length_converter(value, from_unit, to_unit)
@@ -120,5 +115,4 @@ if st.button("✨ Convert Now ✨"):
 
     st.markdown(f"<div class='result-box'>{value} {from_unit} = {result:.4f} {to_unit}</div>", unsafe_allow_html=True)        
 
-# Footer
 st.markdown("<div class='footer'>✨ Developed by Zaryab Irfan ✨</div>", unsafe_allow_html=True) 
