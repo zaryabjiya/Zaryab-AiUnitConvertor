@@ -5,7 +5,7 @@ st.markdown(
     """
     <style>
     .stApp {
-        background: linear-gradient(135deg, #0f0c39, #302b93, #52243e);
+        background: linear-gradient(255deg, #0f0c39, #502b93, #42243e);
         padding: 30px;
         border-radius: 15px;
         box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4);
@@ -60,7 +60,7 @@ st.markdown(
 )
 
 # Title and description
-st.markdown("<h1>🚀 Advanced Unit Converter 🚀</h1>", unsafe_allow_html=True)
+st.markdown("<h1>🚀 Unit Converter 🚀</h1>", unsafe_allow_html=True)
 st.write("Convert units with a **futuristic look** and smooth animations!")
 
 # Sidebar menu
