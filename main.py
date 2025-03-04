@@ -1,142 +1,121 @@
-import streamlit as st
-import pint
-from dotenv import load_dotenv
-import os
+import streamlit as st 
 
-# Load environment variables
-load_dotenv()
-
-# Unit conversion setup
-ureg = pint.UnitRegistry()
-
-# List of common units for dropdown
-unit_options = [
-    "meters", "feet", "kilometers", "miles", "centimeters", "inches",
-    "kilograms", "pounds", "grams", "ounces", "liters", "gallons",
-    "celsius", "fahrenheit", "kelvin", "joules", "calories"
-]
-
-# Function to convert units
-def convert_units(value, from_unit, to_unit):
-    try:
-        result = (value * ureg(from_unit)).to(to_unit)
-        return f"{value} {from_unit} = {result}"
-    except pint.DimensionalityError:
-        return "❌ Invalid conversion"
-    except Exception:
-        return "⚠️ Please enter a valid numeric value and unit names."
-
-# Streamlit UI Setup
-st.set_page_config(page_title="Vibrant Unit Converter", page_icon="♾️", layout="centered")
-
-# Custom Styling
-st.markdown("""
+st.markdown(
+    """
     <style>
-        body {
-            background-color: #1f1f1f;
-        }
-        .title {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #ffcc00;
-            text-align: center;
-            text-shadow: 2px 2px 5px rgba(255, 204, 0, 0.8);
-        }
-        .stTextInput, .stSelectbox, .stNumberInput {
-            border-radius: 10px !important;
-            padding: 10px !important;
-            background-color: #fffcf5 !important;
-            color: #333 !important;
-        }
-        .convert-btn {
-            background-color: #ff5733 !important;
-            color: white !important;
-            font-size: 1.2em;
-            font-weight: bold;
-            border-radius: 10px !important;
-            width: 100%;
-            transition: 0.3s;
-        }
-        .convert-btn:hover {
-            background-color: #ff2e00 !important;
-        }
-        .success-message {
-            font-size: 1.3em;
-            color: #27ae60;
-            font-weight: bold;
-            text-align: center;
-        }
-        .warning-message {
-            font-size: 1.2em;
-            color: #e74c3c;
-            font-weight: bold;
-            text-align: center;
-        }
-        .unit-box {
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            padding: 15px;
-            border-radius: 10px;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            font-size: 1.2em;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-st.markdown('<p class="title">♾️ Vibrant Unit Converter</p>', unsafe_allow_html=True)
-st.write("Convert units instantly with an interactive, colorful experience! 🚀")
-
-# Sidebar Navigation
-st.sidebar.title("🔄 Unit Converter Menu")
-mode = st.sidebar.radio("Choose an option:", ["Unit Converter", "Units & Conversions Table"])
-st.sidebar.markdown("---")
-
-# Unit Converter Section
-if mode == "Unit Converter":
-    st.subheader("📏 Convert Units Instantly")
-
-    col1, col2, col3 = st.columns([1, 1, 1])
-
-    with col1:
-        value = st.text_input("🔢 Enter value:", placeholder="e.g., 10")
-
-    with col2:
-        from_unit = st.selectbox("📏 From unit:", options=unit_options, index=0)
-
-    with col3:
-        to_unit = st.selectbox("🔄 To unit:", options=unit_options, index=1)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    if st.button("🚀 Convert Now", use_container_width=True, key="convert"):
-        if value and from_unit and to_unit:
-            try:
-                value = float(value)
-                result = convert_units(value, from_unit, to_unit)
-                st.markdown(f'<p class="success-message">✅ {result}</p>', unsafe_allow_html=True)
-            except ValueError:
-                st.markdown('<p class="warning-message">❌ Please enter a valid numeric value.</p>', unsafe_allow_html=True)
-        else:
-            st.markdown('<p class="warning-message">⚠️ Please fill in all fields correctly.</p>', unsafe_allow_html=True)
-
-# Units & Conversions Table
-elif mode == "Units & Conversions Table":
-    st.subheader("📌 Common Units & Conversions")
-    st.write("A handy reference guide for everyday conversions.")
-
-    conversion_data = {
-        "Length": ["1 meter = 3.281 feet", "1 kilometer = 0.621 miles", "1 inch = 2.54 cm"],
-        "Weight": ["1 kilogram = 2.205 pounds", "1 gram = 0.035 ounces"],
-        "Temperature": ["0°C = 32°F", "100°C = 212°F"],
-        "Volume": ["1 liter = 4.227 cups", "1 gallon = 3.785 liters"],
-        "Energy": ["1 joule = 0.239 calories", "1 calorie = 4.184 joules"]
+    .stApp {
+        background: linear-gradient(135deg, #141e30, #243b55);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+        color: white;
     }
+    h1 {
+        text-align: center;
+        font-size: 40px;
+        color: #ffcc00;
+        font-weight: bold;
+        text-shadow: 2px 2px 5px rgba(255, 204, 0, 0.5);
+    }
+    .stButton>button {
+        background: linear-gradient(45deg, #ff5733, #ffcc00);
+        color: white;
+        font-size: 20px;
+        padding: 12px 24px;
+        border-radius: 15px;
+        transition: 0.3s ease-in-out;
+        box-shadow: 0px 5px 15px rgba(255, 87, 51, 0.5);
+        border: none;
+        font-weight: bold;
+    }
+    .stButton>button:hover {
+        transform: scale(1.1);
+        background: linear-gradient(45deg, #00c9ff, #92fe9d);
+        color: black;
+    }
+    .result-box {
+        font-size: 22px;
+        font-weight: bold;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+    .footer {
+        text-align: center;
+        margin-top: 50px;
+        font-size: 14px;
+        color: #ffcc00;
+        font-weight: bold;
+    }
+    </style>
+    """, 
+    unsafe_allow_html=True
+)
 
-    for category, conversions in conversion_data.items():
-        with st.expander(f"📌 {category}"):
-            for conversion in conversions:
-                st.markdown(f'<div class="unit-box">🔹 {conversion}</div>', unsafe_allow_html=True)
+# Title and description
+st.markdown("<h1> ✨ Unit Converter with a Fresh Look ✨ </h1>", unsafe_allow_html=True)
+st.write("Easily convert between different units of length, weight, and temperature with style!")
+
+# Sidebar menu
+conversion_type = st.sidebar.selectbox("Choose Conversion Type", ["Length", "Weight", "Temperature"])
+value = st.number_input("Enter Value", value=0.0, min_value=0.0, step=0.1)
+
+col1, col2 = st.columns(2)
+
+# Conversion options
+if conversion_type == "Length":
+    with col1:
+        from_unit = st.selectbox("From", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
+    with col2:
+        to_unit = st.selectbox("To", ["Meters", "Kilometers", "Centimeters", "Millimeters", "Miles", "Yards", "Inches", "Feet"])
+elif conversion_type == "Weight":
+    with col1:
+        from_unit = st.selectbox("From", ["Kilogram", "Grams", "Milligrams", "Pounds", "Ounces"])
+    with col2:
+        to_unit = st.selectbox("To", ["Kilogram", "Grams", "Milligrams", "Pounds", "Ounces"])
+elif conversion_type == "Temperature":
+    with col1:
+        from_unit = st.selectbox("From", ["Celsius", "Fahrenheit", "Kelvin"])
+    with col2:
+        to_unit = st.selectbox("To", ["Celsius", "Fahrenheit", "Kelvin"])
+
+# Conversion functions
+def length_converter(value, from_unit, to_unit):
+    length_units = {
+        'Meters': 1, 'Kilometers': 0.001, 'Centimeters': 100, 'Millimeters': 1000,
+        'Miles': 0.000621371, 'Yards': 1.09361, 'Feet': 3.28084, 'Inches': 39.3701
+    }
+    return (value / length_units[from_unit]) * length_units[to_unit]
+
+def weight_converter(value, from_unit, to_unit):
+    weight_units = {
+        'Kilogram': 1, 'Grams': 1000, 'Milligrams': 1000000, 'Pounds': 2.20462, 'Ounces': 35.274
+    }
+    return (value / weight_units[from_unit]) * weight_units[to_unit]
+
+def temp_converter(value, from_unit, to_unit):
+    if from_unit == "Celsius":
+        return (value * 9/5 + 32) if to_unit == "Fahrenheit" else (value + 273.15) if to_unit == "Kelvin" else value
+    elif from_unit == "Fahrenheit":
+        return ((value - 32) * 5/9) if to_unit == "Celsius" else ((value - 32) * 5/9 + 273.15) if to_unit == "Kelvin" else value
+    elif from_unit == "Kelvin":
+        return (value - 273.15) if to_unit == "Celsius" else ((value - 273.15) * 9/5 + 32) if to_unit == "Fahrenheit" else value
+    return value
+
+# Button for conversion
+if st.button("🔥 Convert Now 🔥"):
+    if conversion_type == "Length":
+        result = length_converter(value, from_unit, to_unit)
+    elif conversion_type == "Weight":
+        result = weight_converter(value, from_unit, to_unit)
+    elif conversion_type == "Temperature":
+        result = temp_converter(value, from_unit, to_unit)
+
+    st.markdown(f"<div class='result-box'>{value} {from_unit} = {result:.4f} {to_unit}</div>", unsafe_allow_html=True)        
 
 # Footer
 st.markdown("---")
